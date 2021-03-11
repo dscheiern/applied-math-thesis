@@ -1,0 +1,136 @@
+---
+title: "Thesis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+data <- read_csv('data\\seedclust_clust70gen45\\hc_environ_stats.csv')
+data
+data$cluster_ID <- as.factor(data$cluster_ID)
+```
+
+```{r, fig.width=4,fig.height=6}
+(ace.vi <- ggplot(data=data, aes(x=ace))+
+  geom_violin(aes(y=cluster_ID, fill=cluster_ID))+
+  geom_boxplot(aes(y=cluster_ID),width=0.2) +
+  scale_fill_brewer(palette="Spectral") +
+  xlab('Acetaldehyde')+
+  ylab('Cluster')+
+  ggtitle('Acetaldehyde Concentrations') +
+  theme_bw())
+```
+```{r, fig.width=4,fig.height=6}
+(form.vi <- ggplot(data=data, aes(x=form))+
+  geom_violin(aes(y=cluster_ID, fill=cluster_ID))+
+  geom_boxplot(aes(y=cluster_ID),width=0.2) +
+  scale_fill_brewer(palette="Spectral") +
+  xlab('Formaldehyde')+
+  ylab('Cluster')+
+  ggtitle('Formaldehyde Concentrations') +
+  theme_bw())
+```
+```{r, fig.width=4,fig.height=6}
+(benz.vi <- ggplot(data=data, aes(x=benz))+
+  geom_violin(aes(y=cluster_ID, fill=cluster_ID))+
+  geom_boxplot(aes(y=cluster_ID),width=0.2) +
+  scale_fill_brewer(palette="Spectral") +
+  xlab('Benzene')+
+  ylab('Cluster')+
+  ggtitle('Benzene Concentrations') +
+  theme_bw())
+```
+```{r, fig.width=4,fig.height=6}
+(pm.vi <- ggplot(data=data, aes(x=pm))+
+  geom_violin(aes(y=cluster_ID, fill=cluster_ID))+
+  geom_boxplot(aes(y=cluster_ID),width=0.2) +
+  scale_fill_brewer(palette="Spectral") +
+  xlab('PM 2.5')+
+  ylab('Cluster')+
+  ggtitle('PM 2.5 Concentrations') +
+  theme_bw())
+```
+
+
+
+```{r}
+library(patchwork)
+ace.hist <- ggplot(data=data)+
+  geom_histogram(aes(x=ace,y=..density..))+
+  ggtitle('Ace Histogram')+
+  theme_bw()
+pm.hist <- ggplot(data=data)+
+  geom_histogram(aes(x=pm,y=..density..))+
+  ggtitle('Particulate Matter Histogram')+
+  theme_bw()
+form.hist <- ggplot(data=data)+
+  geom_histogram(aes(x=form,y=..density..))+
+  ggtitle('Form Histogram')+
+  theme_bw()
+benz.hist <- ggplot(data=data)+
+  geom_histogram(aes(x=benz,y=..density..))+
+  ggtitle('Benz Histogram')+
+  theme_bw()
+(ace.hist + pm.hist)/(form.hist + benz.hist)
+```
+
+ANOVA
+```{r}
+
+# Compute the analysis of variance
+ace.aov <- aov(ace ~ cluster_ID, data = data)
+# Summary of the analysis
+summary(ace.aov)
+```
+
+```{r}
+# Compute the analysis of variance
+form.aov <- aov(form ~ cluster_ID, data = data)
+# Summary of the analysis
+summary(form.aov)
+```
+
+```{r}
+# Compute the analysis of variance
+benz.aov <- aov(benz ~ cluster_ID, data = data)
+# Summary of the analysis
+summary(benz.aov)
+```
+
+```{r}
+# Compute the analysis of variance
+pm.aov <- aov(pm ~ cluster_ID, data = data)
+# Summary of the analysis
+summary(pm.aov)
+```
+
+```{r}
+sse <- read_csv('data\\seedclust_clust70gen45\\dbiandsilandsse.csv')
+
+ggplot(data=sse)+
+  geom_histogram(aes(sse$`12`,..density..,fill='blue',bins=25),color='black',alpha=0.35) +
+  geom_histogram(aes(sse$`13`,..density..,fill='green',bins=25),color='black',alpha=0.35) +
+  geom_histogram(aes(sse$`14`,..density..,fill='red',bins=25),color='black',alpha=0.3) +
+  theme_bw() +
+  xlab('Sum of Squared Error')+
+  ylab('Density') +
+  ggtitle('Histogram of Sum of Squared Errors from Genetic Algorithm', subtitle='Generations 0, 8, and 15')+
+  scale_fill_identity(name = 'Generation', guide='legend', labels = c('Gen. 0','Gen. 8','Gen. 15'))
+```
+
+
+
+
+
+
+
+
+
+
+
+
